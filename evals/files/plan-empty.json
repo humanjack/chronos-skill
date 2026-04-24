@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "timezone": "America/Los_Angeles",
+  "preferences": {
+    "buffer_pct": 0.15,
+    "energy_windows": {}
+  },
+  "goals": [],
+  "routines": [],
+  "tasks": [],
+  "schedule_blocks": [],
+  "calendar_sync": {
+    "last_pull_at": null,
+    "last_push_at": null,
+    "primary_calendar_id": null
+  }
+}

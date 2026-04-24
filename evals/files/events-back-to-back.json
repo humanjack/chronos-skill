@@ -1,0 +1,9 @@
+[
+  {"date": "2026-04-28", "start_time": "09:00", "end_time": "10:00", "tz": "America/Los_Angeles", "title": "Kickoff",       "google_event_id": "g-bt-1", "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false},
+  {"date": "2026-04-28", "start_time": "10:00", "end_time": "11:00", "tz": "America/Los_Angeles", "title": "Design review", "google_event_id": "g-bt-2", "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false},
+  {"date": "2026-04-28", "start_time": "11:00", "end_time": "12:00", "tz": "America/Los_Angeles", "title": "Standup",       "google_event_id": "g-bt-3", "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false},
+  {"date": "2026-04-28", "start_time": "13:00", "end_time": "14:00", "tz": "America/Los_Angeles", "title": "Interview",     "google_event_id": "g-bt-4", "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false},
+  {"date": "2026-04-28", "start_time": "14:00", "end_time": "15:00", "tz": "America/Los_Angeles", "title": "Roadmap",       "google_event_id": "g-bt-5", "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false},
+  {"date": "2026-04-28", "start_time": "15:00", "end_time": "16:00", "tz": "America/Los_Angeles", "title": "1:1",           "google_event_id": "g-bt-6", "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false},
+  {"date": "2026-04-28", "start_time": "16:00", "end_time": "17:00", "tz": "America/Los_Angeles", "title": "Retro",         "google_event_id": "g-bt-7", "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false}
+]

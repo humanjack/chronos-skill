@@ -1,0 +1,5 @@
+[
+  {"date": "2026-04-28", "start_time": "09:30", "end_time": "10:00", "tz": "America/Los_Angeles", "title": "Daily standup", "google_event_id": "g-ext-stand", "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false},
+  {"date": "2026-04-28", "start_time": "13:00", "end_time": "14:00", "tz": "America/Los_Angeles", "title": "Design review", "google_event_id": "g-ext-dr",    "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false},
+  {"date": "2026-04-28", "start_time": "16:00", "end_time": "16:30", "tz": "America/Los_Angeles", "title": "1:1 with Dana", "google_event_id": "g-ext-11",    "chronos_task_id": null, "chronos_block_id": null, "is_chronos": false, "is_all_day": false}
+]
