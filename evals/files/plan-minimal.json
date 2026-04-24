@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "timezone": "America/Los_Angeles",
+  "preferences": {
+    "buffer_pct": 0.15,
+    "energy_windows": {
+      "deep_work": {"start": "08:00", "end": "11:00", "tz": "floating"}
+    }
+  },
+  "goals": [
+    {
+      "id": "goal-ship0001",
+      "title": "Ship chronos v1",
+      "target_date": "2026-07-24",
+      "success_criteria": "Daily usage for 14 days; >=20 round-trip edits.",
+      "status": "active",
+      "updated_at": "2026-04-20T10:00:00Z"
+    }
+  ],
+  "routines": [
+    {
+      "id": "routine-gym001",
+      "title": "Gym",
+      "cadence": {"days": ["mon", "wed", "fri"], "tz": "floating"},
+      "preferred_window": {"start": "07:00", "end": "08:30", "tz": "floating"},
+      "duration_minutes": 60,
+      "linked_goal_id": null,
+      "status": "active",
+      "updated_at": "2026-04-20T10:00:00Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-doc00001",
+      "title": "Draft chronos design doc",
+      "estimate_minutes": 90,
+      "priority": "high",
+      "deadline": "2026-04-30",
+      "linked_goal_id": "goal-ship0001",
+      "status": "open",
+      "updated_at": "2026-04-22T09:00:00Z"
+    },
+    {
+      "id": "task-pr000001",
+      "title": "Review Sam's PR",
+      "estimate_minutes": 30,
+      "priority": "medium",
+      "deadline": "2026-04-28",
+      "linked_goal_id": null,
+      "status": "open",
+      "updated_at": "2026-04-22T09:00:00Z"
+    },
+    {
+      "id": "task-prep0001",
+      "title": "Prep for Monday 1:1",
+      "estimate_minutes": 30,
+      "priority": "medium",
+      "deadline": "2026-04-27",
+      "linked_goal_id": null,
+      "status": "open",
+      "updated_at": "2026-04-22T09:00:00Z"
+    }
+  ],
+  "schedule_blocks": [],
+  "calendar_sync": {
+    "last_pull_at": null,
+    "last_push_at": null,
+    "primary_calendar_id": null
+  }
+}

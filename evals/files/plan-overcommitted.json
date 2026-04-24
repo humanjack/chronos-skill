@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "timezone": "America/Los_Angeles",
+  "preferences": {
+    "buffer_pct": 0.15,
+    "energy_windows": {}
+  },
+  "goals": [
+    {
+      "id": "goal-ship0001",
+      "title": "Ship chronos v1",
+      "target_date": "2026-07-24",
+      "success_criteria": "Daily usage for 14 days.",
+      "status": "active",
+      "updated_at": "2026-04-20T10:00:00Z"
+    }
+  ],
+  "routines": [],
+  "tasks": [
+    {"id": "task-big00001", "title": "Write 3-hour design doc", "estimate_minutes": 180, "priority": "high", "deadline": "2026-04-29", "linked_goal_id": "goal-ship0001", "status": "open", "updated_at": "2026-04-22T09:00:00Z"},
+    {"id": "task-big00002", "title": "Debug sync reconciliation",  "estimate_minutes": 120, "priority": "high", "deadline": "2026-04-29", "linked_goal_id": "goal-ship0001", "status": "open", "updated_at": "2026-04-22T09:00:00Z"},
+    {"id": "task-big00003", "title": "Write M3 test plan",         "estimate_minutes": 120, "priority": "medium", "deadline": "2026-05-05", "linked_goal_id": "goal-ship0001", "status": "open", "updated_at": "2026-04-22T09:00:00Z"},
+    {"id": "task-big00004", "title": "Review Sam's PR",           "estimate_minutes": 60,  "priority": "medium", "deadline": "2026-04-29", "linked_goal_id": null, "status": "open", "updated_at": "2026-04-22T09:00:00Z"},
+    {"id": "task-big00005", "title": "1:1 prep for Dana",          "estimate_minutes": 30,  "priority": "low",    "deadline": "2026-04-30", "linked_goal_id": null, "status": "open", "updated_at": "2026-04-22T09:00:00Z"}
+  ],
+  "schedule_blocks": [],
+  "calendar_sync": {
+    "last_pull_at": null,
+    "last_push_at": null,
+    "primary_calendar_id": null
+  }
+}

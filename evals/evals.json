@@ -1,0 +1,102 @@
+{
+  "skill_name": "chronos",
+  "notes": [
+    "Iteration 1 deliberately omits assertions — write them after first-run outputs, per agentskills.io/skill-creation/evaluating-skills.",
+    "Each case runs twice per iteration: once with the chronos skill loaded, once without (fresh Claude). Subagents get a fresh context.",
+    "Fixture files are pre-populated plan/event JSONs the agent treats as the current state; the eval harness copies them into CHRONOS_HOME and pipes events via stdin where applicable."
+  ],
+  "evals": [
+    {
+      "id": "plan-cold-start",
+      "mode": "plan",
+      "prompt": "I want to get serious about planning my work. Help me set up a plan — I want to ship a side project called chronos in 3 months, go to the gym Mon/Wed/Fri mornings, and I have a few tasks this week: draft a design doc (deadline Friday), review Sam's PR, and prep for Monday's 1:1.",
+      "expected_output": "A plan created with one goal (ship chronos, target ~3 months out), one routine (gym M/W/F floating-tz morning), and three tasks with appropriate deadlines and estimates. The design-doc task is linked to the chronos goal. The assistant asks clarifying questions ONLY for genuinely missing info (success criteria for the goal); it does not re-confirm defaults.",
+      "files": ["evals/files/plan-empty.json"]
+    },
+    {
+      "id": "plan-gap-detection",
+      "mode": "plan",
+      "prompt": "Let's review my plan.",
+      "expected_output": "Summary of what's in the plan, then up to 2 gaps surfaced (stale-goal for 'Ship chronos v1' with no recent linked task activity, or similar). No full JSON dump.",
+      "files": ["evals/files/plan-minimal.json"]
+    },
+    {
+      "id": "today-typical",
+      "mode": "today",
+      "prompt": "What should today look like?",
+      "expected_output": "A time-blocked schedule for 2026-04-28 that honors the 3 calendar events (standup 9:30, design review 13:00, 1:1 at 16:00), fills gaps with the 3 tasks ranked by deadline proximity and goal-alignment, reserves ~15% buffer, and does NOT flag overcommitment (the day fits).",
+      "files": ["evals/files/plan-minimal.json", "evals/files/events-typical-day.json"],
+      "context": {"date": "2026-04-28"}
+    },
+    {
+      "id": "today-overcommitted",
+      "mode": "today",
+      "prompt": "Plan my day.",
+      "expected_output": "A time-blocked schedule that fits what it can but EXPLICITLY calls out overcommitment and names a concrete defer candidate (lowest-ranked unfit task). Does not silently drop work.",
+      "files": ["evals/files/plan-overcommitted.json", "evals/files/events-back-to-back.json"],
+      "context": {"date": "2026-04-28"}
+    },
+    {
+      "id": "today-empty-calendar",
+      "mode": "today",
+      "prompt": "What should I focus on today?",
+      "expected_output": "A schedule with no external events, the gym routine placed in its preferred morning window (it's a Tuesday so gym does NOT fire — routine is skipped), and the tasks filling the morning deep-work window if configured.",
+      "files": ["evals/files/plan-minimal.json"],
+      "context": {"date": "2026-04-28"}
+    },
+    {
+      "id": "sync-external-edit",
+      "mode": "sync",
+      "prompt": "Sync my calendar.",
+      "expected_output": "Assistant pulls events, runs reconcile, and reports the action types. For a chronos-tagged event whose start_time moved in the remote, a 'pull_time_change' action updates the local block; the summary mentions exactly one time-change.",
+      "files": ["evals/files/plan-minimal.json"]
+    },
+    {
+      "id": "sync-orphan-detection",
+      "mode": "sync",
+      "prompt": "Something's off with my calendar — can you check?",
+      "expected_output": "Orphan surfaced (chronos-tagged event with no matching local block). Assistant presents the three options (re-link, adopt, delete) and waits for user choice. Does not auto-resolve.",
+      "files": ["evals/files/plan-empty.json", "evals/files/events-with-orphan.json"]
+    },
+    {
+      "id": "next-in-gap",
+      "mode": "next",
+      "prompt": "What should I do next?",
+      "expected_output": "'kind: gap' — names a specific task from the plan that fits the current gap, with a one-sentence 'why' referencing deadline or goal alignment. Does not dump the full day.",
+      "files": ["evals/files/plan-minimal.json", "evals/files/events-typical-day.json"],
+      "context": {"now": "2026-04-28T10:30:00"}
+    },
+    {
+      "id": "next-mid-meeting",
+      "mode": "next",
+      "prompt": "What am I doing right now and how much longer?",
+      "expected_output": "'kind: active' — names the current meeting ('Daily standup') and minutes remaining (~X minutes, where X is minutes to 10:00).",
+      "files": ["evals/files/plan-minimal.json", "evals/files/events-typical-day.json"],
+      "context": {"now": "2026-04-28T09:40:00"}
+    },
+    {
+      "id": "next-ahead-of-schedule",
+      "mode": "next",
+      "prompt": "I finished early — what now?",
+      "expected_output": "Either 'kind: gap' with a goal-advancing task OR 'kind: ahead' with a bank/advance suggestion. Response is one short paragraph, not the full day.",
+      "files": ["evals/files/plan-minimal.json"],
+      "context": {"now": "2026-04-28T21:50:00"}
+    },
+    {
+      "id": "zoned-standup-while-traveling",
+      "mode": "today",
+      "prompt": "I'm in Tokyo this week — plan my day.",
+      "expected_output": "Schedule respects any zoned commitments (if the user has a 9am PT standup it renders at 01:00 JST) and WARNS when a zoned commitment lands outside reasonable hours. Floating routines follow the user to JST local.",
+      "files": ["evals/files/plan-minimal.json"],
+      "context": {"date": "2026-04-28", "system_tz": "Asia/Tokyo"}
+    },
+    {
+      "id": "dst-transition-day",
+      "mode": "today",
+      "prompt": "Plan Sunday for me.",
+      "expected_output": "On a DST transition day, zoned blocks render at the correct wall-clock pre- and post-transition; no block is double-placed or dropped. System timestamps remain UTC.",
+      "files": ["evals/files/plan-minimal.json"],
+      "context": {"date": "2026-11-01", "system_tz": "America/Los_Angeles"}
+    }
+  ]
+}
