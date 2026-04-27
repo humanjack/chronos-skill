@@ -44,7 +44,7 @@ def normalize_event(ev: dict[str, Any]) -> dict[str, Any]:
         dt = start["dateTime"]
         tz = start.get("timeZone") or "UTC"
         date_part, time_part = _split_datetime(dt, tz)
-        end_date, end_time = _split_datetime(end.get("dateTime") or dt, end.get("timeZone") or tz)
+        _end_date, end_time = _split_datetime(end.get("dateTime") or dt, end.get("timeZone") or tz)
         return {
             "google_event_id": ev.get("id"),
             "date": date_part,

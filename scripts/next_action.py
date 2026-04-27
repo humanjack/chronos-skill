@@ -104,7 +104,7 @@ def pick_next(
 
     # Rank open tasks with same heuristic as schedule_day.
     goals_by_id = {g["id"]: g for g in plan.get("goals", [])}
-    ranked = schedule_day._rank_tasks(plan.get("tasks", []), goals_by_id, today)
+    ranked = schedule_day.rank_tasks(plan.get("tasks", []), goals_by_id, today)
 
     buffer_pct = float((plan.get("preferences") or {}).get("buffer_pct", 0.15))
     available = int(gap_minutes * (1 - buffer_pct))
@@ -116,7 +116,7 @@ def pick_next(
         ranked = sorted(ranked, key=lambda t: (0 if t.get("priority") == "high" else 1,))
 
     for t in ranked:
-        if min(t["estimate_minutes"], available) >= 15 and t["estimate_minutes"] <= available:
+        if 15 <= t["estimate_minutes"] <= available:
             why_bits = []
             if t.get("deadline"):
                 why_bits.append(f"deadline {t['deadline']}")
@@ -150,7 +150,12 @@ def main(argv: list[str] | None = None) -> int:
         plan = plan_store.load()
     events = schedule_day._load_events(args.events)
     now_tz = system_tz()
-    now_local = datetime.fromisoformat(args.now).replace(tzinfo=now_tz) if args.now else datetime.now(tz=now_tz)
+    if args.now:
+        parsed = datetime.fromisoformat(args.now)
+        # Preserve a user-supplied offset; only attach system tz to naive input.
+        now_local = parsed if parsed.tzinfo is not None else parsed.replace(tzinfo=now_tz)
+    else:
+        now_local = datetime.now(tz=now_tz)
     out = pick_next(plan, events, now_local, now_tz=now_tz)
     json.dump(out, sys.stdout, indent=2, sort_keys=True)
     sys.stdout.write("\n")

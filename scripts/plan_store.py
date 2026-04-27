@@ -60,26 +60,29 @@ def load() -> dict[str, Any]:
     return raw
 
 
-def save(plan: dict[str, Any]) -> None:
-    validate(plan)
-    home = chronos_home()
-    home.mkdir(parents=True, exist_ok=True, mode=0o700)
-    target = plan_path()
-    # Atomic write: tempfile + rename.
-    fd, tmp = tempfile.mkstemp(dir=home, prefix=".plan-", suffix=".json")
+def _write_json_atomic(path: Path, payload: Any) -> None:
+    """Write JSON atomically: tempfile in same dir, fsync, chmod 0600, rename."""
+    parent = path.parent
+    parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    fd, tmp = tempfile.mkstemp(dir=parent, prefix=f".{path.stem}-", suffix=".json")
     try:
         with os.fdopen(fd, "w") as f:
-            json.dump(plan, f, indent=2, sort_keys=True)
+            json.dump(payload, f, indent=2, sort_keys=True)
             f.flush()
             os.fsync(f.fileno())
         os.chmod(tmp, 0o600)
-        os.replace(tmp, target)
+        os.replace(tmp, path)
     except Exception:
         try:
             os.unlink(tmp)
         except FileNotFoundError:
             pass
         raise
+
+
+def save(plan: dict[str, Any]) -> None:
+    validate(plan)
+    _write_json_atomic(plan_path(), plan)
 
 
 # ----- id gen -----
@@ -247,7 +250,8 @@ def archive(plan: dict[str, Any], today: date | None = None) -> dict[str, Any]:
     existing = json.loads(arch_path.read_text()) if arch_path.exists() else {"blocks": [], "tasks": []}
     existing["blocks"].extend(archived_blocks)
     existing["tasks"].extend(archived_tasks)
-    arch_path.write_text(json.dumps(existing, indent=2, sort_keys=True))
+    # Same atomic-write + 0600 contract as the main plan file.
+    _write_json_atomic(arch_path, existing)
 
     plan["schedule_blocks"] = [b for b in plan["schedule_blocks"] if b["date"] >= cutoff_date.isoformat()]
     plan["tasks"] = [t for t in plan["tasks"] if not (t["status"] == "done" and (t.get("updated_at") or "") < cutoff_ts)]
@@ -304,6 +308,12 @@ def main(argv: list[str] | None = None) -> int:
         plan = load()
     except SchemaError as e:
         sys.stderr.write(f"schema error: {e}\n")
+        return 2
+    except json.JSONDecodeError as e:
+        sys.stderr.write(f"plan file is not valid JSON: {e}\n")
+        return 2
+    except OSError as e:
+        sys.stderr.write(f"could not read plan file: {e}\n")
         return 2
 
     try:
