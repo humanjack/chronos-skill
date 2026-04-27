@@ -145,6 +145,37 @@ class PlanStoreTest(unittest.TestCase):
         plan = plan_store.load()
         self.assertEqual(plan["goals"][0]["title"], "CLI Goal")
 
+    def test_cli_handles_corrupt_plan_json(self) -> None:
+        # Corrupt the plan file directly.
+        plan_store.load()  # initialize
+        plan_store.plan_path().write_text("{not valid json")
+        rc = plan_store.main(["summary"])
+        # Should exit 2, not throw.
+        self.assertEqual(rc, 2)
+
+    def test_archive_file_is_mode_600(self) -> None:
+        plan = plan_store.load()
+        old_date = (date(2026, 4, 24) - timedelta(days=45)).isoformat()
+        plan_store.upsert_block(plan, {
+            "id": "block-archmode",
+            "date": old_date,
+            "start_time": "09:00",
+            "end_time": "10:00",
+            "tz": "UTC",
+            "item_type": "task",
+            "item_id": "task-x",
+            "google_event_id": None,
+            "status": "done",
+        })
+        plan_store.save(plan)
+        plan_store.archive(plan, today=date(2026, 4, 24))
+        # Archive file should exist for the cutoff month and be mode 0600.
+        cutoff_month = (date(2026, 4, 24) - timedelta(days=30)).strftime("%Y-%m")
+        arch_file = plan_store.archive_dir() / f"{cutoff_month}.json"
+        self.assertTrue(arch_file.exists(), f"archive file missing: {arch_file}")
+        mode = arch_file.stat().st_mode & 0o777
+        self.assertEqual(mode, 0o600)
+
 
 if __name__ == "__main__":
     unittest.main()

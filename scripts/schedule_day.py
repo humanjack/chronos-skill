@@ -26,6 +26,7 @@ from ._time import (
     now_utc_iso,
     resolve_utc,
     system_tz,
+    tz_name,
     weekday_abbr,
 )
 
@@ -63,7 +64,7 @@ def _routine_occurs_on(routine: dict[str, Any], target: date, now_tz: ZoneInfo) 
     return weekday_abbr(local_date, tz) in cadence.get("days", [])
 
 
-def _rank_tasks(tasks: list[dict[str, Any]], goals_by_id: dict[str, dict[str, Any]], target: date) -> list[dict[str, Any]]:
+def rank_tasks(tasks: list[dict[str, Any]], goals_by_id: dict[str, dict[str, Any]], target: date) -> list[dict[str, Any]]:
     def deadline_days(t: dict[str, Any]) -> int:
         d = t.get("deadline")
         if not d:
@@ -147,7 +148,7 @@ def build_proposal(
         if slot is None:
             notes.append(f"routine {r['title']!r} could not be placed — no free slot ≥ {r['duration_minutes']}m")
             continue
-        iv, start_time_str, end_time_str = slot
+        iv, _start_time_str, _end_time_str = slot
         tz_for_display = now_tz if pw["tz"] == FLOATING else ZoneInfo(pw["tz"])
         local_date, local_start = _local_time_str(iv.start_utc, tz_for_display)
         _, local_end = _local_time_str(iv.end_utc, tz_for_display)
@@ -169,14 +170,13 @@ def build_proposal(
 
     # --- 3. Rank tasks. ---
     goals_by_id = {g["id"]: g for g in plan.get("goals", [])}
-    ranked_tasks = _rank_tasks(plan.get("tasks", []), goals_by_id, target)
+    ranked_tasks = rank_tasks(plan.get("tasks", []), goals_by_id, target)
 
     # --- 4. Fill gaps. ---
     filled: list[tuple[Interval, dict[str, Any]]] = list(anchored)
-    task_idx = 0
     placed_task_ids: set[str] = set()
     gap_iter_safety = 0
-    while task_idx < len(ranked_tasks) and gap_iter_safety < 100:
+    while gap_iter_safety < 100:
         gap_iter_safety += 1
         gap = _largest_gap(filled, day_start, day_end)
         if gap is None or gap.minutes() < MIN_BLOCK_MINUTES:
@@ -184,7 +184,7 @@ def build_proposal(
         available = int(gap.minutes() * (1 - buffer_pct))
         # Find highest-ranked remaining task whose estimate fits.
         placed = False
-        for t in ranked_tasks[task_idx:]:
+        for t in ranked_tasks:
             if t["id"] in placed_task_ids:
                 continue
             est = min(t["estimate_minutes"], MAX_BLOCK_MINUTES)
@@ -198,7 +198,7 @@ def build_proposal(
                     "date": local_date,
                     "start_time": local_start,
                     "end_time": local_end,
-                    "tz": str(tz_for_display),
+                    "tz": tz_name(tz_for_display),
                     "item_type": "task",
                     "item_id": t["id"],
                     "google_event_id": None,
@@ -238,7 +238,7 @@ def build_proposal(
             "date": local_date,
             "start_time": local_start,
             "end_time": local_end,
-            "tz": str(now_tz),
+            "tz": tz_name(now_tz),
             "item_type": "buffer",
             "item_id": None,
             "google_event_id": None,

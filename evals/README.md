@@ -11,7 +11,7 @@ Evaluation harness following https://agentskills.io/skill-creation/evaluating-sk
 
 Runtime artifacts (per-iteration runs, grading, benchmarks) live in a sibling directory, `chronos-skill-workspace/`, which is gitignored.
 
-```
+```text
 chronos-skill-workspace/
 └── iteration-N/
     ├── <eval-id>/

@@ -63,11 +63,35 @@ def _require(cond: bool, msg: str) -> None:
 
 
 def _check_date(s: Any, field: str) -> None:
-    _require(isinstance(s, str) and len(s) == 10 and s[4] == "-" and s[7] == "-", f"{field} must be YYYY-MM-DD, got {s!r}")
+    _require(
+        isinstance(s, str) and len(s) == 10 and s[4] == "-" and s[7] == "-",
+        f"{field} must be YYYY-MM-DD, got {s!r}",
+    )
+    try:
+        y, m, d = int(s[0:4]), int(s[5:7]), int(s[8:10])
+    except ValueError:
+        raise SchemaError(f"{field} must be YYYY-MM-DD with numeric parts, got {s!r}")
+    _require(1 <= m <= 12, f"{field} month must be 01-12, got {s!r}")
+    _require(1 <= d <= 31, f"{field} day must be 01-31, got {s!r}")
+    # Validate full calendar correctness (e.g. Feb 30, Apr 31).
+    from datetime import date as _date
+    try:
+        _date(y, m, d)
+    except ValueError as e:
+        raise SchemaError(f"{field} is not a real calendar date ({s!r}): {e}")
 
 
 def _check_time(s: Any, field: str) -> None:
-    _require(isinstance(s, str) and len(s) == 5 and s[2] == ":", f"{field} must be HH:MM, got {s!r}")
+    _require(
+        isinstance(s, str) and len(s) == 5 and s[2] == ":",
+        f"{field} must be HH:MM, got {s!r}",
+    )
+    try:
+        h, m = int(s[0:2]), int(s[3:5])
+    except ValueError:
+        raise SchemaError(f"{field} must be HH:MM with numeric parts, got {s!r}")
+    _require(0 <= h <= 23, f"{field} hour must be 00-23, got {s!r}")
+    _require(0 <= m <= 59, f"{field} minute must be 00-59, got {s!r}")
 
 
 def _check_tz(s: Any, field: str) -> None:
