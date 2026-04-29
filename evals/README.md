@@ -40,30 +40,30 @@ mkdir -p ../chronos-skill-workspace/iteration-1
 
 ### Run one case
 
-Pick a case from `evals.json`, e.g. `plan-from-scratch` (id 1). Run it as a Claude subagent for both configurations:
+Pick a case from `evals.json`, e.g. `plan-cold-start`. Run it as a Claude subagent for both configurations:
 
 **With skill:**
 
-```
+```text
 Execute this task in a fresh context:
 - Skill path: /path/to/chronos-skill
-- CHRONOS_HOME: /tmp/chronos-eval-1-with
+- CHRONOS_HOME: /tmp/chronos-eval-with
 - Task: [paste the "prompt" field from evals.json]
 - Input files: [copy the fixture listed in "files" to CHRONOS_HOME]
 - For modes today/sync/next, pipe the events fixture via stdin to the relevant script.
 - Save all outputs (final message, any files written under CHRONOS_HOME) to:
-  ../chronos-skill-workspace/iteration-1/plan-from-scratch/with_skill/outputs/
+  ../chronos-skill-workspace/iteration-1/plan-cold-start/with_skill/outputs/
 ```
 
 **Without skill** (baseline — same prompt, no skill path):
 
-```
+```text
 Execute this task in a fresh context:
-- CHRONOS_HOME: /tmp/chronos-eval-1-without
+- CHRONOS_HOME: /tmp/chronos-eval-without
 - Task: [same prompt]
 - Input files: [same fixture]
 - Save outputs to:
-  ../chronos-skill-workspace/iteration-1/plan-from-scratch/without_skill/outputs/
+  ../chronos-skill-workspace/iteration-1/plan-cold-start/without_skill/outputs/
 ```
 
 Each run should start with a clean context — no leftover state from earlier runs or from skill development.

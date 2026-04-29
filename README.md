@@ -53,7 +53,7 @@ For the `sync` mode, a Google Calendar MCP server must be available to your agen
 
 Once installed, open a new session and just talk:
 
-```
+```text
 > help me set up a plan for this quarter
 > what should today look like?
 > sync my calendar
