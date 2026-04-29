@@ -15,21 +15,52 @@ Four modes, triggered by natural language:
 | **next** | "what should I do next", "I finished early" | Picks one action based on where you are: current block + minutes remaining, best-fit task for the current gap, or a goal-advancing suggestion |
 | **sync** | "sync my calendar", "something's off" | Pulls Google Calendar, reconciles against the plan, round-trips edits, surfaces orphans and conflicts without auto-resolving |
 
+## Installation
+
+Chronos follows the [Agent Skills](https://agentskills.io) open standard and works in any compatible agent (Claude Code, VS Code Copilot, Cursor, Gemini CLI, and others).
+
+### Claude Code
+
+Install as a personal skill (available in all your projects):
+
+```bash
+git clone https://github.com/humanjack/chronos-skill ~/.claude/skills/chronos
+```
+
+Or install as a project skill (this project only):
+
+```bash
+git clone https://github.com/humanjack/chronos-skill .claude/skills/chronos
+```
+
+Claude Code picks up the skill automatically — no restart needed if the `.claude/skills/` directory already exists. If you just created the directory for the first time, restart Claude Code.
+
+### VS Code (GitHub Copilot) and other agents
+
+Skills go in `.agents/skills/` by default for most other clients:
+
+```bash
+git clone https://github.com/humanjack/chronos-skill .agents/skills/chronos
+```
+
+Check your agent's documentation if it uses a different path.
+
+### Google Calendar sync
+
+For the `sync` mode, a Google Calendar MCP server must be available to your agent — Chronos calls whatever MCP tools the harness exposes. The [google_workspace_mcp](https://github.com/taylorwilsdon/google_workspace_mcp) server is a tested option. Chronos doesn't manage credentials itself.
+
 ## Quick start
 
-Chronos is a Claude skill — it runs inside Claude Code, Claude Desktop, or any harness that supports skills. To use it:
+Once installed, open a new session and just talk:
 
-1. Make the skill available to your agent (clone this repo into a skills directory, or point the harness at it — depends on your client).
-2. In a new session, just talk:
-   ```
-   > help me set up a plan for this quarter
-   > what should today look like?
-   > sync my calendar
-   > what should I do next?
-   ```
-3. Chronos persists your plan under `~/.chronos/` across sessions. Every invocation picks up where you left off.
+```
+> help me set up a plan for this quarter
+> what should today look like?
+> sync my calendar
+> what should I do next?
+```
 
-For Google Calendar sync, the [Google Calendar MCP server](https://github.com/taylorwilsdon/google_workspace_mcp) (or equivalent) must be available to the agent. Chronos uses whatever MCP tools the harness exposes; it doesn't manage credentials itself.
+Chronos persists your plan under `~/.chronos/` across sessions. Every invocation picks up where you left off. Override the location with `CHRONOS_HOME=/path`.
 
 ## How it's built
 
