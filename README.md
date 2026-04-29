@@ -21,23 +21,40 @@ Chronos follows the [Agent Skills](https://agentskills.io) open standard and wor
 
 ### Claude Code
 
-Install as a personal skill (available in all your projects):
+**Personal install** — available in all your projects:
 
 ```bash
 git clone https://github.com/humanjack/chronos-skill ~/.claude/skills/chronos
 ```
 
-Or install as a project skill (this project only):
+**Project install** — committed to the repo, shared with your team:
 
 ```bash
 git clone https://github.com/humanjack/chronos-skill .claude/skills/chronos
+# then: git add .claude/skills/chronos && git commit
 ```
 
-Claude Code picks up the skill automatically — no restart needed if the `.claude/skills/` directory already exists. If you just created the directory for the first time, restart Claude Code.
+Claude Code picks up the skill automatically — no restart needed if `.claude/skills/` already exists. If you just created that directory for the first time, restart Claude Code.
+
+**Via plugin marketplace** — once Chronos is listed in a marketplace, you can install without cloning:
+
+```text
+/plugin install chronos@<marketplace-name>
+```
+
+### Gemini CLI
+
+Gemini CLI can install directly from a git URL:
+
+```bash
+gemini skills install https://github.com/humanjack/chronos-skill.git
+```
+
+To install for a single workspace only, add `--scope workspace`.
 
 ### VS Code (GitHub Copilot) and other agents
 
-Skills go in `.agents/skills/` by default for most other clients:
+Most other clients look for skills in `.agents/skills/`:
 
 ```bash
 git clone https://github.com/humanjack/chronos-skill .agents/skills/chronos
